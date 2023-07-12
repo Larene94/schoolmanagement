@@ -12,7 +12,7 @@ class Teacher:
         self.subject = input("Enter the subject taught: ")
         self.classes = []
         while True:
-            class_name = input("Enter the class name taught by the teacher: ")
+            class_name = input("Enter the class name taught by the teacher: (Press 'ENTER' to complete it)")
             if class_name == "":
                 break
             self.classes.append(class_name)
@@ -55,31 +55,31 @@ class Menu:
         class_name = input("Enter class name to display: ")
         if class_name in self.classes:
             class_displayed = class_name
-#            print(f"{class_displayed} is led by {homeroom_teachers} teacher and there is student {students} - in the class")
+            print(f"{class_displayed} is led by {self.homeroom_teachers()} teacher and there is student {self.classes()} - in the class")
 
     def manage_student(self):
         first = input("Enter student's first name: ")
         last = input("Enter student's last name: ")
         if (first, last) in self.students:
             student_displayed = (first, last)
-#            print(f"")
+            print(f"{student_displayed} is from class {self.classes()}")
 
     def manage_teacher(self):
         first = input("Enter teacher's first name: ")
         last = input("Enter teacher's last name: ")
         if (first, last) in self.teachers:
             teacher_displayed = (first, last)
-#            print(f"Teacher {first, last} teaching {class_name} for {subject} ")
+            print(f"Teacher - {teacher_displayed} is teaching {self.classes()} for {self.subjects()} ")
 
     def manage_homeroom_teacher(self):
         first = input("Enter homeroom teacher's first name: ")
         last = input("Enter homeroom teacher's last name: ")
         if (first, last) in self.homeroom_teachers:
             homeroom_teacher_displayed = (first, last)
-#            print(f"{homeroom_teacher_displayed} is the homeroom teacher of {class_name}")
+            print(f" Teacher - {homeroom_teacher_displayed} is the homeroom teacher of {self.classes()}")
 
     def create_user(self):
-        user = input("Enter user type: student/ teacher/ home room teacher")
+        user = input("Enter user type: student/ teacher/ home room teacher\n")
         if user == "student":
             self.create_student()
         if user == "teacher":
@@ -90,6 +90,7 @@ class Menu:
             return
         else:
             print("Error")
+            return
 
     def manage(self):
         manage = input("Enter option: class/ student/ teacher/ home room teacher")
@@ -105,6 +106,7 @@ class Menu:
             return
         else:
             print("Error")
+            return
 
 
 while True:
