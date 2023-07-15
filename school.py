@@ -1,8 +1,10 @@
 class Student:
-    def __init__(self):
+    def __init__(self, menu):
         self.first_name = input("Enter first name: ")
         self.last_name = input("Enter last name: ")
         self.class_name = input("Enter class name: ")
+        group = menu.get_group(self.class_name)
+        group.students.append(self)
 
 
 class Teacher:
@@ -25,105 +27,134 @@ class HomeroomTeacher:
         self.class_name = input("Enter homeroom teacher's class name: ")
 
 
-user_types = ["student", "teacher", "homeroom teacher"]
-available_commands = ["create", "manage", "end"]
+class Group:
+    def __init__(self, class_name):
+        self.class_name = class_name
+        self.students = []
+        self.teachers = []
+        self.homeroom_teacher = None
 
 
 class Menu:
     def __init__(self):
-        self.students = []
-        self.teachers = []
-        self.homeroom_teachers = []
-        self.classes = []
+        self.students = {}
+        self.teachers = {}
+        self.homeroom_teachers = {}
+        self.classes = {}
+
+    def get_group(self, class_name):
+        if class_name not in self.classes:
+            group = Group(class_name)
+            self.classes[class_name] = group
+        return self.classes[class_name]
 
     def create_student(self):
-        student = Student()
-        self.students.append(student)
+        student = Student(self)
+        self.students[student.first_name, student.last_name] = student
         print("Student added successfully")
 
     def create_teacher(self):
         teacher = Teacher()
-        self.teachers.append(teacher)
+        self.teachers[teacher.first_name, teacher.last_name] = teacher
         print("Teacher added successfully")
 
     def create_homeroom_teacher(self):
         homeroom_teacher = HomeroomTeacher()
-        self.homeroom_teachers.append(homeroom_teacher)
+        self.homeroom_teachers[homeroom_teacher.first_name, homeroom_teacher.last_name] = homeroom_teacher
         print("Homeroom teacher added successfully")
 
     def manage_class(self):
         class_name = input("Enter class name to display: ")
         if class_name in self.classes:
-            class_displayed = class_name
-            print(f"{class_displayed} is led by {self.homeroom_teachers()} teacher and there is student {self.classes()} - in the class")
+            group = self.classes[class_name]
+            if group.homeroom_teacher:
+                print(f"{group.homeroom_teacher.first_name} {group.homeroom_teacher.last_name}")
+            else:
+                print("No homeroom teacher found")
+            for student in group.students:
+                print(f"Student: {student.first_name} {student.last_name}")
 
     def manage_student(self):
-        first = input("Enter student's first name: ")
-        last = input("Enter student's last name: ")
-        if (first, last) in self.students:
-            student_displayed = (first, last)
-            print(f"{student_displayed} is from class {self.classes()}")
+        first_name = input("Enter student's first name: ")
+        last_name = input("Enter student's last name: ")
+        if (first_name, last_name) in self.students:
+            student = self.students[(first_name, last_name)]
+            print(f"Student: {student.first_name} {student.last_name}")
+            group = self.get_group(student.class_name)
+            print(f"Class: {group.class_name}")
+            for teacher in group.teachers:
+                if student.class_name in teacher.classes:
+                    print(f"Teacher: {teacher.first_name} {teacher.last_name}")
+                    print(f"Teaching subject: {teacher.subject}")
+        else:
+            print("Student not found.")
 
     def manage_teacher(self):
-        first = input("Enter teacher's first name: ")
-        last = input("Enter teacher's last name: ")
-        if (first, last) in self.teachers:
-            teacher_displayed = (first, last)
-            print(f"Teacher - {teacher_displayed} is teaching {self.classes()} for {self.subjects()} ")
+        first_name = input("Enter teacher's first name: ")
+        last_name = input("Enter teacher's last name: ")
+        if (first_name, last_name) in self.teachers:
+            teacher = self.teachers[(first_name, last_name)]
+            print(f"Teacher: {teacher.first_name} {teacher.last_name}")
+            print(f"Teaching subjects: {teacher.subject}")
+            for class_name in teacher.classes:
+                print(f"Class: {class_name}")
+        else:
+            print("Teacher not found.")
 
     def manage_homeroom_teacher(self):
-        first = input("Enter homeroom teacher's first name: ")
-        last = input("Enter homeroom teacher's last name: ")
-        if (first, last) in self.homeroom_teachers:
-            homeroom_teacher_displayed = (first, last)
-            print(f" Teacher - {homeroom_teacher_displayed} is the homeroom teacher of {self.classes()}")
+        first_name = input("Enter homeroom teacher's first name: ")
+        last_name = input("Enter homeroom teacher's last name: ")
+        if (first_name, last_name) in self.homeroom_teachers:
+            homeroom_teacher = self.homeroom_teachers[(first_name, last_name)]
+            print(f"Homeroom Teacher: {homeroom_teacher.first_name} {homeroom_teacher.last_name}")
+            print(f"Class: {homeroom_teacher.class_name}")
+            group = self.get_group(homeroom_teacher.class_name)
+            for student in group.students:
+                print(f"Student: {student.first_name} {student.last_name}")
+        else:
+            print("Homeroom teacher not found.")
 
     def create_user(self):
-        user = input("Enter user type: student/ teacher/ home room teacher\n")
+        user = input("Enter user type: student/ teacher/ homeroom teacher\n")
         if user == "student":
             self.create_student()
         if user == "teacher":
             self.create_teacher()
-        if user == "home room teacher":
+        if user == "homeroom teacher":
             self.create_homeroom_teacher()
         if user == "end":
             return
         else:
-            print("Error")
-            return
+            print("Invalid user type")
 
     def manage(self):
-        manage = input("Enter option: class/ student/ teacher/ home room teacher")
+        manage = input("Enter option: class/ student/ teacher/ homeroom teacher")
         if manage == "class":
             self.manage_class()
         if manage == "student":
             self.manage_student()
         if manage == "teacher":
             self.manage_teacher()
-        if manage == "home room teacher":
+        if manage == "homeroom teacher":
             self.manage_homeroom_teacher()
         if manage == "end":
             return
         else:
-            print("Error")
-            return
+            print("Invalid option")
 
+
+menu = Menu()
 
 while True:
-    menu = Menu()
     command = input("Enter your command: create/ manage/ end \n"
                     "create - to create profile\n"
                     "manage - to display information\n"
                     "end - to terminate program\n")
-    if command not in available_commands:
-        print("Error, please enter valid command")
-        continue
-    if command == "end":
-        break
     if command == "create":
         menu.create_user()
     if command == "manage":
         menu.manage()
+    if command == "end":
+        break
     else:
         print("Invalid command")
-        break
