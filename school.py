@@ -17,6 +17,8 @@ class Teacher:
             class_name = input("Enter the class name taught by the teacher: (Press 'ENTER' to complete it)")
             if class_name == "":
                 break
+            group = menu.get_group(class_name)
+            group.teachers.append(self)
             self.classes.append(class_name)
 
 
@@ -25,6 +27,8 @@ class HomeroomTeacher:
         self.first_name = input("Enter homeroom teacher's first name: ")
         self.last_name = input("Enter homeroom teacher's last name: ")
         self.class_name = input("Enter homeroom teacher's class name: ")
+        group = menu.get_group(self.class_name)
+        group.homeroom_teacher = self
 
 
 class Group:
@@ -118,11 +122,11 @@ class Menu:
         user = input("Enter user type: student/ teacher/ homeroom teacher\n")
         if user == "student":
             self.create_student()
-        if user == "teacher":
+        elif user == "teacher":
             self.create_teacher()
-        if user == "homeroom teacher":
+        elif user == "homeroom teacher":
             self.create_homeroom_teacher()
-        if user == "end":
+        elif user == "end":
             return
         else:
             print("Invalid user type")
@@ -131,13 +135,13 @@ class Menu:
         manage = input("Enter option: class/ student/ teacher/ homeroom teacher")
         if manage == "class":
             self.manage_class()
-        if manage == "student":
+        elif manage == "student":
             self.manage_student()
-        if manage == "teacher":
+        elif manage == "teacher":
             self.manage_teacher()
-        if manage == "homeroom teacher":
+        elif manage == "homeroom teacher":
             self.manage_homeroom_teacher()
-        if manage == "end":
+        elif manage == "end":
             return
         else:
             print("Invalid option")
@@ -152,9 +156,9 @@ while True:
                     "end - to terminate program\n")
     if command == "create":
         menu.create_user()
-    if command == "manage":
+    elif command == "manage":
         menu.manage()
-    if command == "end":
+    elif command == "end":
         break
     else:
         print("Invalid command")
